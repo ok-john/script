@@ -5,7 +5,7 @@ if ! [ -f "keys/iv" ]; then echo "no iv"; exit 1; fi
 for f in $(find . -type f -not -path "*/keys/*" -not -path "*/.git/*" | grep '.enc$'); do
 	_fn="$(echo $f | sed 's/\.enc$//g')"
 	bi verify $_fn.sig $f keys/publickey
-	if [ $? -ne 0 ]; then echo ""; fi
+	if [ $? -ne 0 ]; then exit 1; fi
 	openssl enc -a -chacha -salt -K $(cat keys/privatekey) -iv $(cat keys/iv) -d -in $f -out $_fn
 	chmod +x $_fn
 	rm -rf $f $_fn.sig
