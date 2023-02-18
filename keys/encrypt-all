@@ -1,0 +1,8 @@
+if ! [ -d "keys" ]; then echo "no keys dir"; exit 1; fi
+if ! [ -f "keys/privatekey" ]; then echo "no privatekey"; exit 1; fi
+if ! [ -f "keys/iv" ]; then echo "no iv"; exit 1; fi
+
+for f in $(find . -type f -not -path "*/keys/*" -not -path "*/.git/*" | grep -v README.md); do
+	openssl enc -a -chacha -salt -K $(cat keys/privatekey) -iv $(cat keys/iv) -in $f -out $f.enc
+	rm -rf $f
+done

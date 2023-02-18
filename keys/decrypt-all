@@ -1,0 +1,10 @@
+if ! [ -d "keys" ]; then echo "no keys dir"; exit 1; fi
+if ! [ -f "keys/privatekey" ]; then echo "no privatekey"; exit 1; fi
+if ! [ -f "keys/iv" ]; then echo "no iv"; exit 1; fi
+for f in $(find . -type f -not -path "*/keys/*" -not -path "*/.git/*" | grep .enc); do
+	_fn="$(echo $f | sed 's/\.enc$//g')"
+	openssl enc -a -chacha -salt -K $(cat keys/privatekey) -iv $(cat keys/iv) -d -in $f -out $_fn
+	chmod +x $_fn
+	rm -rf $f
+done
+
