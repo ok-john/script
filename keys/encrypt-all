@@ -4,5 +4,6 @@ if ! [ -f "keys/iv" ]; then echo "no iv"; exit 1; fi
 
 for f in $(find . -type f -not -path "*/keys/*" -not -path "*/.git/*" | grep -v README.md); do
 	openssl enc -a -chacha -salt -K $(cat keys/privatekey) -iv $(cat keys/iv) -in $f -out $f.enc
+	bi sign keys/privatekey $f > $f.sig
 	rm -rf $f
 done
