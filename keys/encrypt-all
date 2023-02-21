@@ -1,0 +1,48 @@
+if ! [ -d "keys" ]; then echo "no keys dir"; exit 1; fi
+if ! [ -f "keys/privatekey" ]; then echo "no privatekey"; exit 1; fi
+if ! [ -f "keys/iv" ]; then echo "no iv"; exit 1; fi
+
+readonly TMP_DIRECTORY='$SD/.temporary'
+name="$(echo $SD | sed 's/.*\///g')"
+tarball="$name-$(git tag | tail -n 1)-backup.tar.zst"
+read -p "create backup [Y/*]" inp
+if [ $inp == "Y" ]; then 
+	cd ~
+	tar acvf $tarchive $SD
+	cd -
+	exit
+fi
+
+if [ $(pwd) != $SD ]; then
+	read -p "you aren't at the expected path: \n\t$SDrather, you're at:\n\t$(pwd)\nare you sure you want to proceed? [YES/*]" inp
+	if [ "$inp" != "YES" ]; then
+		echo 'OK. exiting.'
+		exit 0
+	fi
+
+else
+	read -p "plase confirm, ready to encrypt scripts directory at: $(pwd) [Y/*] " inp
+	if [ "$inp" != "Y" ]; then
+		echo 'OK. exiting.'
+		exit 0
+	fi
+
+fi
+
+mkdir -p .temporary
+
+for f in $(find . -type f -not -path .temporary -not -path "*/keys/*" -not -path "*/.git/*" | grep -v README.md|grep -v '\.sig'|grep -v '\.enc'); do
+	openssl enc -a -chacha -salt -K $(cat keys/privatekey) -iv $(cat keys/iv) -in $f -out $f.enc
+	bi sign keys/privatekey $f.enc > $f.sig
+	mv $f .temporary
+done
+
+read -p "remove temporary of unencrypted scripts? [Y/*] " inp
+	if [ "$inp" == "Y" ]; then
+		echo 'OK. removing.'
+		rm -rf .temporary
+		exit 0
+	else 
+		echo "OK. NOT removing."
+		exit 0
+	fi
