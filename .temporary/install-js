@@ -1,0 +1,15 @@
+# Installs a vanilla js runtime for compiling js -> wasm
+# and decompiling wasm -> js.
+
+_os="$(identify-os)"
+
+if [ "$_os" == "Linux" ]; then
+	_url="https://ftp.mozilla.org/pub/firefox/releases/110.0b1/jsshell/jsshell-linux-x86_64.zip"
+else
+	_url="https://ftp.mozilla.org/pub/firefox/releases/110.0b1/jsshell/jsshell-mac.zip"
+fi
+
+wget $_url
+unzip jsshell-*
+sudo mv *.so /usr/lib/
+rm -rf jsshell-*

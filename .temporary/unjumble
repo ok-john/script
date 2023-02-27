@@ -1,0 +1,9 @@
+#!/opt/homebrew/bin/bash
+fn="$(echo $1 | sed 's/.jm//g')"
+result="$(echo $1 | sed 's/.jm/.tar.zst/g')"
+if ! [ -f "$1" ]; then echo -e "not a file: $1\n" && exit 0; fi
+uconv -f EBCDIC-CP-DK -t ASCII -o "$fn" "$1"
+age -d -i ~/.ssh/privatekey -o $result $fn
+tar xvf $result
+rm -rf "$fn"*
+

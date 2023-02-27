@@ -1,0 +1,18 @@
+source /etc/bashrc
+name=${1:-"None"}
+if [ -f "$SD/$name" ]; then echo -e "\nfile exists: $name" && exit 0; fi
+cat >$SD/$name <<EOL
+#!$(which bash)
+name="\$(ps -o command \$\$ | tail -n 1|sed 's/.*\///g'|tr -d ' \n\t')"; _=("\$@"); argv=\${_[*]}; argc=\${#_[*]}; start="\$(date +%s)"; dir=\$(dirname "\$(realpath \$0)"); ws="\$dir/ws/\$name"; mkdir -p \$ws; usage() { echo -e '$name '; }; show_env() { echo -e "\\nname: \\t\$name\\n\\nargv: \\t\$argv\\n\\nargc: \\t\$argc\\n\\nstart: \\t\$start\\n\\ndir: \\t\$dir\\n\\nws: \\t\$ws\\n"; }
+
+show_env
+
+EOL
+
+chmod +x $SD/$name
+$SD/$name
+
+read -p "open vim? [{y,Y}|*]: " inp
+if [ $inp == "y" ] || [ $inp == "Y" ]; then 
+	vim $SD/$name
+fi

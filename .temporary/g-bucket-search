@@ -1,0 +1,1 @@
+curl "https://buckets.grayhatwarfare.com/api/v1/buckets/0/${2:-20}?access_token=ec5d8ad5c3cb1d6a9c29c3601ef5a6c3&keywords=$1" | jq

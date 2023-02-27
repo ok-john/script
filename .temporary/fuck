@@ -1,0 +1,11 @@
+# Group operations across the GF(4611686018427387904)
+# some points are on some elliptic curves, haha ya'know? 
+
+G=$(( 1 << 62 )) 
+bitsize=$(( $(echo $G|wc -c) - 1 ))
+for n in $(echo {10..1000}); do
+	for i in $(echo {2..9}); do
+		x=$(nrnd $bitsize)
+		echo $(( $(( x * i )) % G ))
+	done
+done

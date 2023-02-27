@@ -1,0 +1,70 @@
+#!/opt/homebrew/bin/bash
+_args=("oai-google-chat")
+_v=oai-google-chat
+sid="$(date | sha256sum | cut -c -16)"
+logdir="/etc/openai/logs/$sid" && mkdir -p $logdir 
+stopscript="$logdir/stop.sh" && echo "kill -9 $$" > $stopscript && chmod +x $stopscript
+iter="$logdir/iter" && echo 1 > "$iter"
+logfile="$logdir/chat.log"
+latest_logfile="/etc/openai/logs/latest.log" && rm -rf $latest_logfile
+ln -s $logfile $latest_logfile
+_args=("$@")
+echo '[oai-header]' >> $logfile
+echo "date=$(date)" >> $logfile
+echo "start=$(unix-utc-now)" >> $logfile
+echo "pid=$$" >> $logfile
+echo "session_id=$sid" >> $logfile
+echo "args='${_args[*]}'" >> $logfile
+echo "log_file=$logfile" >> $logfile
+echo "stop_script=$stopscript" >> $logfile
+
+function _search
+{
+	local j=0
+	local args=("$@")
+	for _l in $(google-search "${args[*]}"); do
+		echo "$j=$_l"
+		j=$(( j + 1 ))
+	done
+}
+
+function chat
+{
+	sleep $(nrnd 1)
+	d='Write an highly random gramatically correct english question about an obscure topic. You must respond with a valid question.'
+	local args=("$@")
+	if [ ${#args} -lt 3 ]; then chat "$d"; else
+		# log iteration
+		local i="$(cat $iter)"
+		local rid="$(echo "$i-${args[*]}" | sha256sum | cut -c -8)"
+		local ldir="$logdir/rounds/$i" && mkdir -p $ldir
+		echo $rid > "$ldir/id"
+		local l="$ldir/links.log"
+		local lf="$ldir/chat.log"
+		echo "[round]" >> $lf
+		echo "id=$rid" >> $lf 
+		echo "iteration=$i" >> $lf
+		echo "unix_timestamp=$(unix-utc-now)" >> $lf
+		# log main response
+		local resp="$(echo ${args[*]} | oai -max=500 -tor -temp=1.0 | tr -d '\n\t')"
+		_search "${args[*]}" >> $l
+		_search "$resp" >> $l
+		echo "total_links=$(cat $l|wc -l|tr -d ' ')" >> $lf
+		echo -e "link=$l" >> $lf
+		echo -e "chat=$lf" >> $lf
+
+		echo -e "\nquery='${args[*]}'" >> $lf
+		echo -e "response='$resp'\n" >> $lf
+
+		cat $lf >> $logfile
+
+		# next round
+		echo $(( i + 1 )) > $iter
+		chat "$(echo -e "Write a highly random question in response to the following\n $resp\nYou must respond with a valid question." | oai -max=500 -tor -temp=1.0|tr -d '\n\t')"
+	fi
+}
+
+echo "tail -f $latest_logfile"
+
+chat $1
+

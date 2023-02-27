@@ -1,0 +1,15 @@
+#!/opt/homebrew/bin/bash
+. logger.sh
+readonly __adir="/Volumes/ws/media/archive/screenshots/$(date-fmt)" && mkdir -p $__adir
+readonly __dir=/Volumes/ws/media/screenshots
+
+rasps $__dir
+clean-screenshots
+cp -r $__dir $__adir
+if [ $? == 0 ]; then
+	rm -rf "$__dir"
+	mkdir -p $__dir
+else
+	l "failed to archive screenshots"
+fi
+l "archived to $__adir"

@@ -1,0 +1,17 @@
+#!/opt/homebrew/bin/bash
+. logger.sh
+function usage
+{
+ echo 'Maps the execution of a bash function'
+ echo 'to each line of input on a given file'
+ echo '[USAGE]'
+ echo 'map-func [global-function] [absolute_file_path]'
+}
+
+readonly _f=${1:-"echo"}
+readonly _fn=${2:-"/Volumes/ws/global/scripts/sample-input"}
+echo -e "Running $_f on every line in $_fn"
+while read p; do
+	echo $p | $_f
+done < $_fn
+

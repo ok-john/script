@@ -1,0 +1,8 @@
+#!/opt/homebrew/bin/bash
+_args=("parse0")
+_v=parse-conti
+while read p; do
+  fn="$(echo $p | sed 's/.*Leak\///g' | grep '.7z' | tr -d '"' | tr -d "'")"
+  echo $p -o $fn \&
+done < ${1:-"/Volumes/ws/global/scripts/sample-input"}
+

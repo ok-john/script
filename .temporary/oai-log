@@ -1,0 +1,2 @@
+#!/opt/homebrew/bin/bash
+tail -f /etc/openai/logs/latest.log

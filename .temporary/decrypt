@@ -1,0 +1,6 @@
+_fn="$(echo $1 | sed 's/.enc//g')"
+if [ $_fn == $1 ]; then _fn="$1.decr"; fi
+if ! [ -f $1 ]; then echo "$1 does not exist" && exit 0; fi
+openssl enc -a -chacha -K $(cat $SD/keys/privatekey) -iv $(cat $SD/keys/iv) -pbkdf2 -salt -d -in $1 -out $_fn
+if [ $? == 0 ]; then rm -rf $1; fi
+

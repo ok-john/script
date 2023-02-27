@@ -1,0 +1,2 @@
+sudo sysctl kern.tty.ptmx_max=2
+sysctl -a

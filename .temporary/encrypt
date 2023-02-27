@@ -1,0 +1,1 @@
+openssl enc -a -chacha -pbkdf2 -salt -K $(cat $SD/keys/privatekey) -iv $($SD/keys/iv) -in $1 -out $1.enc

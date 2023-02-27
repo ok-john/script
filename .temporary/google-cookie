@@ -1,0 +1,92 @@
+#!/usr/bin/python3
+import sys
+ 
+import random
+import string
+import string
+import random
+import time
+from datetime import datetime
+
+start = datetime.utcnow()
+
+
+def epoch():
+    seconds = start.timestamp()
+    return str(seconds).split('.')[0]
+
+def p_jar():
+    today = datetime.utcnow()
+    return today.strftime("%Y-%m-%d-%m")
+
+def ri(n):
+  return str(random.randint(1, 9))+''.join([str(random.randint(0, 9)) for i in range(n-1)])
+
+def r(n):
+  url_safe_characters = string.ascii_letters + string.digits + '-_'
+  return ''.join(random.choice(url_safe_characters) for i in range(n))
+
+def gen_nid():
+    return "511="+r(230)
+
+def rand_ip():
+    private_ips=set(['0', '1', '2', '192','172','10'])
+    ret = '.'.join([str(random.randint(1, 254)) for n in [0,0,0,0]])
+    if ret.split('.')[0] in private_ips: return rand_ip()
+    return ret
+
+
+
+def gen_gab():
+    _gab=f"ID={''.join(['0' for _ in range(16)])}:TM={epoch()}:C=r:IP={rand_ip()}-:S={''.join(['0' for _ in range(23)])}"
+    skip=set(["IP", "TM"])
+    res=[]
+    for var in _gab.split(':'):
+        if var.split("=")[0] in skip: 
+            res.append(var)
+            continue
+        s = var.split("=")
+        res.append("=".join([s[0], r(len(s[1]))]))
+    return ":".join(res)
+
+def rnd_of(encoding, i):
+    return f"$(cat /dev/urandom|head -n 5|{encoding}|cut -c -{i})"
+
+def gen_otz():
+    return '_'.join([ri(7),ri(2),ri(2),ri(6),ri(2),ri(6)])
+
+def gen_enid():
+    return f"{ri(2)}.{r(2)}={r(254)}"
+
+def new_cookie():
+    return {
+		"__Secure-1PAPISID": "0000000000000000000000000000000000",
+		"__Secure-1PSID": "00000000000000000000000000000000000000000000000000000000000000000000000",
+		"__Secure-1PSIDCC": "00000000000000000000000000000000000000000000000000000000000000000000000000",
+		"__Secure-3PAPISID": "0000000000000000000000000000000000",
+		"__Secure-3PSID": "00000000000000000000000000000000000000000000000000000000000000000000000",
+		"__Secure-3PSIDCC": "000000000000000000000000000000000000000000000000000000000000000000000000000",
+		"__Secure-ENID": gen_enid(),
+		"1P_JAR": p_jar(),
+		"AEC": "00000000000000000000000000000000000000000000000000000000000",
+		"APISID": "0000000000000000000000000000000000",
+		"CONSENT": "00000000000",
+		"GOOGLE_ABUSE_EXEMPTION": gen_gab(),
+		"HSID": "00000000000000000",
+		"NID": gen_nid(),
+		"OTZ": gen_otz(),
+		"SAPISID": "0000000000000000000000000000000000",
+		"SID": "00000000000000000000000000000000000000000000000000000000000000000000000",
+		"SIDCC": "000000000000000000000000000000000000000000000000000000000000000000000000000",
+		"SOCS": "000000000000000000000000000000000000000000000000000000",
+		"SSID": "00000000000000000"
+    }
+    
+if __name__ == "__main__":
+    exempt=set(["NID", "GOOGLE_ABUSE_EXEMPTION", "1P_JAR", "OTZ", "__Secure-ENID"])
+    result = []
+    for k, v in new_cookie().items():
+        if not k in exempt: 
+            v = r(len(v))
+        result.append('='.join([k,v]))
+    print('Cookie: '+'; '.join(result))

@@ -1,0 +1,7 @@
+# Rotate a word left
+    word="$(get_dword "$1")"
+    first_bit="$(echo -n "$word" | cut -c -1)"
+    rest_bits="$(echo -n "$word" | cut -c 2-)"
+    echo -n "$rest_bits$first_bit"
+	echo 
+

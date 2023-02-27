@@ -1,0 +1,19 @@
+#!/bin/bash
+function info
+{
+	echo 'rasps, like in raspberries'
+	echo 'REMOVES ALL SPACES RECURSIVELY FROM ALL FILES UNDER $1'
+	echo -e '[USAGE]\n\t rasps [directory]\n' 
+}
+if [ $1 == '-h' ]; then info && exit 0; fi
+. logger.sh
+readonly _dir=${1:-"/Volumes/ws/media/screenshots"}
+readonly _tmp='.tmp-fns' && rm -rf $_tmp
+find $_dir -type f 2>/dev/null > $_tmp
+while read p; do
+	v="$(echo $p | sed 's/ /\\ /g')"
+	new="$( echo $v| sed 's/\\ /_/g')"
+	contains ' ' "$p" 
+	if [ $? -eq 1 ]; then echo mv $v $new | bash; fi
+done < $_tmp
+

@@ -1,0 +1,2 @@
+#!/bin/bash
+sudo adduser --system --no-create-home --group ${1:-root}

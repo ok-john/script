@@ -1,0 +1,32 @@
+#!/bin/bash
+#args=("$@")
+#reflect "${args[@]}"
+
+function usage 
+{ 
+	echo -e "\naf [func] [n] [i]\n- - -\n"
+	echo -e "af executes func on n, i times."
+	echo -e "the output of func(n) for round i"
+        echo -e "is passed as the input n for round i-1"
+	echo -e "until i < 1"
+
+}
+
+_f=${1:-usage}
+_n=${2:-""}
+_i=${3-1}
+pidf=".$$"
+if [ $_i -lt 1 ]; then exit; fi
+
+$_f "$($_f $_n)" $(( i - 1 )) | tee $pidf
+n="$(cat
+af $_f "$(cat $pdif)" $(( i - 1 )) && rm -rf $pdif
+
+
+#_l="$($_f $_n)"
+#_i=$(( _i - 1 ))
+
+
+#echo $_l
+#echo af $_f $_l $_i
+

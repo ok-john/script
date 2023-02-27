@@ -1,0 +1,5 @@
+
+launchctl stop system/$1
+launchctl disable system/$1
+launchctl bootout system/$1
+

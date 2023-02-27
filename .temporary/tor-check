@@ -1,0 +1,10 @@
+echo "[ REGULAR IP ]"
+curl zx2c4.com/ip
+echo "[ CURL SOCKS 5 PROXY IP ]"
+curl --socks5-hostname localhost:9050 zx2c4.com/ip
+echo
+echo 'To enable tor run:'
+echo -e '\tbrew services start tor'
+echo 'To curl over socks5 run:'
+echo -e '\tcurl --socks5-hostname localhost:9050 DOMAIN'
+

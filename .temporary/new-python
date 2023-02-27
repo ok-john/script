@@ -1,0 +1,15 @@
+source /etc/bashrc
+name=${1:-"None"}
+if [ -f "$SD/$name" ]; then echo "file exists: $name" && exit 0; fi
+cat >$SD/$name <<EOL
+#!$(which python3)
+import sys
+
+if __name__ == "__main__":
+    print(f"Arguments count: {len(sys.argv)}")
+    for i, arg in enumerate(sys.argv):
+        print(f"Argument {i:>6}: {arg}")
+EOL
+
+chmod +x $SD/$name
+#vim $SD/$name

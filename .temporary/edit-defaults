@@ -1,0 +1,32 @@
+# This is a tool for editing the system
+# defaults on macOS.
+OUT_FILE=${1:-"auto-change.sh"}
+i=0
+total="$(defaults domains -g | sed 's/,/\n/g'|wc -l|tr -d ' ')"
+echo "TOTAL DOMAINS: $(defaults domains -g | sed 's/,/\n/g'|wc -l)"
+echo "OUTPUT WRITING TO: $OUT_FILE"
+
+for domain in $(defaults domains -g | sed 's/,//g'); do
+	i=$(( i + 1 ))
+	read -p "$i/$total $domain [y/n]: " inp	
+	if [ "$inp" == "n" ]; then continue; fi
+	defaults read $domain
+
+	read -p "edit any keys for $domain?  [d/w/n] " _inp 
+	if [ "$_inp" == "n" ]; then continue; fi
+	if [ "$_inp" == "d" ]; then 
+		echo "defaults delete $domain" >> $OUT_FILE
+	fi
+	if [ "$_inp" == "w" ]; then
+		for key in $(defaults read $domain | sed 's/=.*/,/g' | tr -d '{} \n' | sed 's/,/\n/g'); do
+			read -p "edit $key? [y/n]" _inp
+			if [ "$_inp" == "n" ]; then continue; fi
+			echo "curr: $key -> $(defaults read $domain $key)"
+			read -p "type? " _type
+			read -p "new value? " _new_value
+			echo "defaults write $domain $key -$_type $_new_value" >> $OUT_FILE
+			echo "defaults write $domain $key -$_type $_new_value" 
+		done
+
+	fi
+done

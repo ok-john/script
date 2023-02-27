@@ -1,0 +1,26 @@
+
+function usage
+{
+	echo -e '[INFO]'
+	echo -e 'Uploads a file to the light river.'
+	echo -e '[USAGE]'
+	echo -e '\tlight-river [absolute_file_at]'
+	exit 0
+}
+
+readonly P=${1:-""}
+readonly f=${2:-""}
+if [ "$P" == "" ]; then
+	echo "mind your fucking business you are not invited."
+	exit 0
+fi
+if [ "$f" == "" ]; then usage && exit 0; fi
+if [ -f "$f" ]; then
+	_url="$(echo curl -sS -F\'file=@$f\' "https://syscall.network.com/$P" | bash)"
+	echo $_url | pbcopy
+	echo -e "\n\nrad, the file:\n\n\t$f \n\nmade it up the river.\n\n"
+	echo -e "the url:\n\n\t$_url \n\nmade it to your clipboard.\n\n"
+	echo -e "\nenjoy, friend."
+else
+	echo "$f is not a file."
+fi

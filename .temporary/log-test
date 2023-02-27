@@ -1,0 +1,7 @@
+. logger.sh
+readonly v="$(basename $0 )"
+echo $v
+
+logl "foo"
+
+show

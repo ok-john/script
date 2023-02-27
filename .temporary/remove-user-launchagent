@@ -1,0 +1,49 @@
+#readonly ARGS=("$@")
+#readonly SCRIPT_NAME=`basename "$0"`
+#readonly LOG_DIR=/Volumes/ws/global/evidence/logs && mkdir -p $LOG_DIR
+#readonly LOG_FILE="$LOG_DIR/$SCRIPT_NAME.log"
+#function logl { echo "[ $(date) ] $1" >> $LOG_FILE; }
+#logl "$SCRIPT_NAME ${ARGS[*]}"
+#echo "#To view the output:"
+#echo -e "\tcat $LOG_FILE"
+
+. logger.sh
+exit 
+function __
+{
+	local _domain="$1"
+	local _pid="$2"
+	local _uid=501
+	local _guid=501
+	echo "Disabling $_domain with uid $_uid pid $_pid guid $_guid"
+
+	echo "Disabling by user..."
+	launchctl print user/$_uid/$_domain 
+	launchctl bootout user/$_uid/$_domain 2>/dev/null
+	launchctl stop user/$_uid/$_domain 2>/dev/null
+	launchctl disable user/$_uid/$_domain 2>/dev/null
+
+	echo "Disabling by guid..."
+	launchctl print gui/$_guid/$_domain 
+	launchctl bootout gui/$_guid/$_domain 2>/dev/null
+	launchctl stop gui/$_guid/$_domain 2>/dev/null
+	launchctl disable gui/$_guid/$_domain 2>/dev/null
+
+	echo "Disabling in system..."
+	launchctl print system/$_domain
+	launchctl bootout system/$_domain 2>/dev/null
+	launchctl stop system/$_domain 2>/dev/null
+	launchctl disable system/$_domain 2>/dev/null
+	
+	echo "Disabling by pid..."
+	launchctl print pid/$_pid/$_domain 
+	launchctl bootout pid/$_pid/$_domain 2>/dev/null
+	launchctl stop pid/$_pid/$_domain 2>/dev/null
+	launchctl disable pid/$_pid/$_domain 2>/dev/null
+
+}
+
+
+__ $1 $2 
+
+cat $LOG_FILE

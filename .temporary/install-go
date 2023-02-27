@@ -1,0 +1,26 @@
+#!/opt/homebrew/bin/bash
+name="$(ps -o command $$ | tail -n 1|sed 's/.*\///g'|tr -d ' \n\t')"; _=("$@"); argv=${_[*]}; argc=${#_[*]}; start="$(date +%s)"; dir=$(dirname "$(realpath $0)"); ws="$dir/ws/$name"; mkdir -p $ws; usage() { echo -e 'install-go '; }; show_env() { echo -e "\nname: \t$name\n\nargv: \t$argv\n\nargc: \t$argc\n\nstart: \t$start\n\ndir: \t$dir\n\nws: \t$ws\n"; }
+if [[ $EUID -ne 0 ]]; then echo "This script must be run as root" && exit 1; fi
+readonly gosrc="https://dl.google.com/go"
+readonly VERSION="go1.20.1"
+readonly GO_OOS=${1:-"darwin"} # "darwin" for macOS
+readonly GO_ARCH=${2:-"arm64"}
+readonly GO_TAR="$VERSION.$GO_OOS-$GO_ARCH.tar.gz"
+readonly GO_URL="$gosrc/$GO_TAR"
+
+# clean
+rm -rf /usr/local/go /bin/go /usr/bin/go /usr/bin/gofmt
+
+# pull
+wget $GO_URL
+
+# extract
+tar -C /usr/local -xzf $GO_TAR 
+rm -rf $GO_TAR
+
+# create symlinks
+ln -s /usr/local/go/bin/go /usr/local/bin/go
+ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt
+
+echo -e "\n\n\trun\n\t\texport PATH=\$PATH:/usr/local/go/bin\n\n"
+

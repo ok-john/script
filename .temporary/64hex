@@ -1,0 +1,1 @@
+cat /dev/urandom | head -n 20 | xxd -ps -c 256 | head -n 1 | cut -c -64|pbcopy

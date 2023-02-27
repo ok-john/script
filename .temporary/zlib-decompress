@@ -1,0 +1,4 @@
+#!/opt/homebrew/bin/bash
+
+mkdir -p decompressed
+for f in $(find . -type f | grep zlib); do zclib -d $f > "decompressed/$f.decom"; done

@@ -1,0 +1,27 @@
+#!/usr/bin/python3
+import sys
+
+
+
+def main():
+    if len(sys.argv) < 4:
+        print("fmt-aa [aa-name] [split-char] [string]")
+        return
+    name = sys.argv[1]
+    split_char = sys.argv[2]
+    full = split_char.join(sys.argv[3:])
+    inp = ''.join(sys.argv[2:])
+    full = [ x for x in inp.split(split_char) if x != '']
+    print(f"declare -A {name}=(")
+    for idx, v in enumerate(full):
+        print(f"\t[{idx}]='{v}'")
+    print(")")
+    
+    #print(f"for kk in {'${'+name+'[@]}; do'}")
+    #print(f"for kk in {'{0..'+str(len(full)-1)+'}; do'}")
+    #print("\t echo -ne $kk '-> '")
+    #print(f"\t echo -ne {'${'+name+'[$kk]}'} '\n'")
+    #print("done")
+    
+
+if __name__ == "__main__": main()

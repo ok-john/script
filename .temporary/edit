@@ -1,0 +1,7 @@
+. paths
+. logger.sh
+
+fn="$(which ${1:-"$(basename $0)"})"
+
+vim $fn
+

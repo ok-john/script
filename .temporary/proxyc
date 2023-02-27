@@ -1,0 +1,36 @@
+#!/opt/homebrew/bin/bash
+name="$(ps -o command $$ | tail -n 1|sed 's/.*\///g'|tr -d ' \n\t')"; _=("$@"); argv=${_[*]}; argc=${#_[*]}; start="$(date +%s)"; dir=$(dirname "$(realpath $0)"); ws="$dir/ws/$name"; mkdir -p $ws; usage() { echo -e 'proxyc '; }; show_env() { echo -e "\nname: \t$name\n\nargv: \t$argv\n\nargc: \t$argc\n\nstart: \t$start\n\ndir: \t$dir\n\nws: \t$ws\n"; }
+op signin
+addr=${1:-"zx2c4.com/ip"}
+refreshrate=${1:60}
+proxy_ip=$( random-of "75.101.181.75" "entropy.family" "testing.entropy.family" )
+port_min=9050
+port_max=10050
+uname="gg"
+password="$(op read op://empty/tor/password)"
+networksetup -getsocksfirewallproxy Wi-Fi|sed 's/.*: //g'
+port="$(rand-range $port_min $port_max)"
+#networksetup -getsocksfirewallproxy <networkservice>
+#networksetup -setsocksfirewallproxy <networkservice> <domain> <port number> <authenticated> <username> <password>
+#networksetup -setsocksfirewallproxystate <networkservice> <on off>
+sudo networksetup -setsocksfirewallproxystate Wi-Fi on
+
+function refresh-proxy
+{
+	local port=$1
+	local refreshrate=${2:-30}
+	local proxy="$( random-of "75.101.181.75" "entropy.family" "testing.entropy.family" )"
+	sudo networksetup -setsocksfirewallproxy Wi-Fi $proxy $port on $uname $password
+	echo "[NEW ADDR]"
+	echo -e "from=$proxy:$port"
+	echo -e "curl -ssL --user '$uname:$password' --socks5-hostname $proxy:$port $addr"|bash|head -n 2
+	curl -ssL zx2c4.com/ip|head -n 2
+	sleep ${refreshrate}
+	refresh-proxy $(rand-range 9050 10050) ${refreshrate}
+}
+
+refresh-proxy $port $refreshrate
+
+
+echo -e "curl --user 'gg:8R/fvwWdIwKwXSp3upj2LGHm/YGf/d5KfXZZoHUEanF3QP6T' --socks5-hostname 75.101.181.75:$(rand-range 9050 10050) $addr"
+

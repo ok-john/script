@@ -1,0 +1,8 @@
+#!/bin/bash
+word="$1"
+y=${#word}
+lst="$(echo -n "$word" | cut -c ${y}-)"
+rst="$(echo -n ${word:0:$(( y - 1 ))})"
+echo -n "$lst$rst"
+echo
+

@@ -1,0 +1,56 @@
+#!/opt/homebrew/bin/bash
+
+query="$( url-encode ${1:-"test"})"
+pages=${2:-1}
+
+function gen_query
+{
+	local q=$1
+	local s=$2
+	echo -n "https://www.google.com/search?q=$q&start=$s&num=100"
+	#echo -n "ei=$(nrnd 100 | base64 | cut -c -40)&"
+	#echo -n "ved=$(nrnd 100 | base64 | cut -c -80)&"
+	#echo -n "uact=$(nrnd 1)&"
+	#echo -n "oq=$query&"
+	#echo -n "gs_lcp=$(nrnd 100 | base64 | cut -c -80)"
+	#echo -n "sclient=gws-wiz-serp#ip=1"
+}
+
+function gen_req
+{
+	local url=$1
+	local cks=$2
+	local socks5="--socks5-hostname localhost:9050"
+	echo curl -ssL --http1.1 "'$url'" \
+	"-H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9'" \
+	"-H 'Accept-Encoding: gzip'" \
+	"-H 'Accept-Language: en-US,en;q=0.5'" \
+	"-H 'Connection: keep-alive'" \
+	"-H '$(google-cookie)'" \
+	"-H 'Host: www.google.com'" \
+	"-H 'Referer: https://www.google.com'" \
+	"-H 'Sec-Fetch-Dest: document'" \
+	"-H 'Sec-Fetch-Mode: navigate'" \
+	"-H 'Sec-Fetch-Site: same-origin'" \
+	"-H 'Sec-Fetch-User: ?1'" \
+	"-H 'TE: trailers'" \
+	"-H 'Upgrade-Insecure-Requests: 1'" \
+	"-H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101 Firefox/102.0'" \
+	"-o $cks.gzip" 
+}
+
+for page in $(eval `echo "echo "{0..${pages}}""`); do 
+	url="$(gen_query "$query" "$(( page * 100 ))")"
+	cks="$(echo $url_str|sha256sum|cut -c -32)"
+	gen_req "$url" "$cks"|bash
+	for res in $(7z -so x $cks.gzip | sed 's/></>\n</g' | grep '<a href' | sed 's/.*<a href=//g' | sed 's/ .*//g' | sed 's/"\/.*//g' | tr -s '\n ' | grep -v '"#"'); do
+		echo $res | tr '"' "'"
+	done
+	sleep 2
+done
+
+#echo ${queries[*]}
+exit
+url_str="$( gen_query $query )"
+#url_str="https://httpbin.org/anything"
+	

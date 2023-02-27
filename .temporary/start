@@ -1,0 +1,2 @@
+nohup ./suicide.py &
+nohup ./notice.py &

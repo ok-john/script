@@ -1,0 +1,15 @@
+#!/opt/homebrew/bin/bash
+
+op signin
+uname="gg"
+password="$(op read op://empty/tor/password)"
+#host="$( random-of "75.101.181.75" "entropy.family" "testing.entropy.family" )"
+host="$( random-of "entropy.family" "testing.entropy.family" )"
+port="$(rand-range 9050 10050)" 
+if [ $host == "75.101.181.75" ]; then
+	sudo networksetup -setsocksfirewallproxy Wi-Fi $host $port on $uname $password
+else
+	sudo networksetup -setsocksfirewallproxy Wi-Fi $host $port 
+fi
+echo "proxy=socks5://$host:$port" > $CURL_HOME/.curlrc
+echo curl zx2c4.com/ip

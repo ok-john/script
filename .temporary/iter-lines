@@ -1,0 +1,4 @@
+while read p; do
+  echo "$p"
+done < ${1:-"/Volumes/ws/global/scripts/sample-input"}
+

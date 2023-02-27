@@ -1,0 +1,10 @@
+if [ ${#1} -lt 1 ]; then echo -e "[usage]\n\trandom-ad-search [query]\n\n" && exit 0; fi
+ses="$(random-xor 1 180)"
+afdToken="$(random-xor 1 164)"
+ID="$(random-xor 1 2)"
+S="$(random-xor 1 35)"
+T="$(random-xor 1 11)"
+__gsas="$(random-xor 1 $(echo 6edd117ec2979c7d|wc -l))"
+echo "curl -sSL --socks5-hostname localhost:9050 'http://ww16.mk-ca-bundle.pl/caf/?ses=${ses}%3D&query=${1:-""}&afdToken=${afdToken}&search=1' -H  'User-Agent: god'  -H  'Accept: text/html'  -H  'Accept-Language: en'  -H  'Referer: https://www.google.com/'  -H  'Connection: keep-alive'  -H  'Cookie: __gsas=${__gsas}:ID=${ID}:T=${T}:S=${S}' -H  'Upgrade-Insecure-Requests: 1'" | bash > tmp.html
+
+links tmp.html

@@ -1,0 +1,2 @@
+#!/bin/bash
+kmutil inspect 2>/dev/null| sed 's/No variant specified, falling back to release//g' | head -n 1|sed 's/kernelcache .*/kernelcache/g'|sed 's/.* at //g'

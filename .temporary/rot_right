@@ -1,0 +1,7 @@
+word="$(get_dword $1)"
+n=${#word}
+y=$(( n ))
+last_bit="$(echo -n "$word" | cut -c ${y}-)"
+rest_bits="$(echo -n ${word:0:$(( y ))})"
+echo -n "$last_bit$rest_bits"
+echo

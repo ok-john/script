@@ -1,0 +1,13 @@
+#!/usr/bin/python3
+import sys
+
+if __name__ == "__main__":
+    split_char = sys.argv[1]
+    full = split_char.join(sys.argv[1:])
+    inp = ''.join(sys.argv[2:])
+    full = [ x for x in inp.split(split_char) if x != '']
+    
+    print(' '.join(full[::-1]))
+    
+
+

@@ -1,0 +1,47 @@
+#!/bin/bash
+
+function usage 
+{
+	echo -e '	 Some old BIOSes from before year 2010 attempt to parse the' 
+	echo -e '	 boot sector and refuse to boot it if it does not contain a '
+	echo -e '	 bootable MBR partition. This is a problem if one wants to  '
+	echo -e '	 use GPT on this disk, because, from the BIOS viewpoint, it '
+	echo -e '	 contains only one, non-bootable, MBR partition of type ee  '
+	echo -e '	 i.e., the protective MBR partition One can mark the protective '
+	echo -e '	 MBR entry as bootable using fdisk -t mbr /dev/sda, and it  '
+	echo -e '	 will work on some BIOSes. However, the UEFI specification  '
+	echo -e '	 prohibits the protective MBR partition entry from being    '
+	echo -e '	 bootable, and UEFI-based boards do care about this, even   '
+	echo -e '	 in the legacy boot mode. So, this matters if one wants to  '
+	echo -e '	 create a GPT-based USB flash drive that is supposed to boot' 
+	echo -e '	 both on modern UEFI-based boards and also on old BIOSes that '
+	echo -e '	 insist on finding a bootable MBR partition. It is not possible ' 
+	echo -e '	 to solve this problem using traditional tools such as fdisk or '
+	echo -e '	 gdisk, but it is possible to create a fake MBR partition entry '
+	echo -e '	 suitable for both kinds of BIOSes manually as a sequence of bytes.'
+	echo -e '	 The command below will overwrite the second MBR partition slot '
+	echo -e '	 and add a bootable partition there of type 0 i.e. unused,' 
+	echo -e '	 covering only the first sector of the device. It will not  '
+	echo -e '	 interfere with the GPT or with the first MBR partition     '
+	echo -e '	 entry which normally contains a protective MBR partition.  '
+	echo -e '	 \n\n[usage]'
+	echo -e '		$ bios-to-gpt [device/driver]'
+	echo -e '	 \n[example]'
+	echo -e '		$ bios-to-gpt /dev/sda'
+}
+
+read -p "careful now, do you know what you are doing? [YES/*] " inp
+if [ "$inp" != "YES" ]; then 
+	read -p "want some info? [YES/*] " inp
+	if [ "$inp" == "YES" ]; then 
+		usage
+	fi
+	exit 0
+fi
+
+disk_device_driver=${1:-"/dev/sda"}
+
+
+#printf '\200\0\0\0\0\0\0\0\0\0\0\0\001\0\0\0' | dd of=${disk_device_driver} bs=1 seek=462
+
+

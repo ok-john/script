@@ -1,0 +1,8 @@
+#!/bin/bash
+function say_hi
+{
+	sleep $( nrnd 1 )
+	say "hi"
+	beep
+}
+say_hi

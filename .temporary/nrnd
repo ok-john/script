@@ -1,0 +1,4 @@
+_out=$(cat /dev/urandom | head -n $(( 10 * ${1:-8} )) | base64 | tr -d ' a-zA-Z+/=' | tr -d ' ' | cut -c -${1:-8})
+
+if [ "${_out:0:1}" == "0" ]; then _out="1${_out:1}"; fi
+echo $_out | tr -d ' '

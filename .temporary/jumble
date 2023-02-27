@@ -1,0 +1,12 @@
+#!/bin/bash
+if ! [ -f $1 ]; then echo "no such file: $1" && exit 1; fi
+fn="$(echo $1|sha256sum|cut -c -16)"
+encoding=${2:-"EBCDIC-CP-DK"}
+PUB=${3:-$PUB}
+
+age -R /scripts/.public -a -o "$fn.enc" $1
+uconv -f ASCII -t "$encoding" -o "$fn.jm" "$fn.enc"
+mv "$fn.jm" $PUB/jm
+rm -rf "fn.enc" "$1" "$fn"
+echo "$PUB/$fn.jm"
+

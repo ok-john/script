@@ -1,0 +1,118 @@
+#!/bin/bash
+
+# key-grid is a tool for generating and sharing 
+# temporary wireguard keys on systems that are suspected 
+# to have been comprompised.
+#
+# It allows the user to quickly generate thousands of keys
+# select one for usage, and encrypt the rest to be sent 
+# off to the peer computer.
+#
+# Once on the peer computer, a two-dimensional point (x,y)
+# can be entered to retreive the original key.
+
+readonly _f=${1:-"help"}
+readonly _size=${2:-8}
+readonly _dir=${3:-"$HOME/.wg"}
+readonly _out=${4:-"keys.enc"}
+readonly _n=$(( $(( $_size / 2 )) ))
+trap $(mkdir -p $_dir) EXIT
+
+function _collect
+{
+			cat ./$0 | grep "function __*" | sed 's/function __/       /g' | tail -n +3
+}
+
+function __help
+{
+			echo -e "grid [ function ] [ size ]\n$(_collect)"
+}
+
+function __decrypt
+{
+			if [ -f "$_out" ]; then
+				_from=$(echo "$(pwd)/$_dir/*" | tr -s '\/')
+				trap $(openssl enc -a -aes256 -pbkdf2 -salt -d -in $_out -out $_out.tar.xz) EXIT
+				trap $(tar xf $_out.tar.xz) EXIT
+				trap $(mkdir -p $_dir && mv $_from $_dir && rm -rf $_out.tar.xz) EXIT
+				trap $(rm -rf $_from $_out) EXIT
+			fi
+}
+
+function __encrypt
+{
+			if [ -d "$_dir" ]; then
+				trap $(tar cf $_out.tar.xz "$_dir/") EXIT
+				trap $(openssl enc -a -aes256 -pbkdf2 -salt -in $_out.tar.xz -out $_out) EXIT
+				rm -rf $_out.tar.xz $_dir
+			fi
+}
+
+function __size
+{
+			echo "$(( $(ls -l $_dir | grep -v ^l | wc -l) - 1 ))"
+}
+
+function dirs
+{
+			echo -e $(echo -e " :: $(__xy | sed 's/ / :: /g' | tr -s ' ') " | sed 's/ :: /\\n/g')
+}
+
+function __xy
+{
+			echo -e " ${1:-"echo"} "{$(( $_n ))..0}"-"{$(( $_n ))..0}" \n" | bash
+}
+
+function new-key
+{
+			_id=${1:-"00"}
+			trap $(mkdir -p $_id) EXIT
+			trap $(cd $_id && umask 077 && wg genkey | tee privatekey | wg pubkey > publickey && wg genpsk > presharedkey) EXIT
+}
+
+function __fill
+{
+			local _ds=$(echo -e $(__xy | sed 's/ /\\n/g'))
+			local log_line="created"
+			for _i in $_ds; do
+				_targ="$_dir/$_i"
+				trap $(mkdir -p $_targ) EXIT
+				trap $(new-key $_targ) EXIT
+			done
+			echo -e "$(__size)"
+}
+
+function __ls
+{
+			ls -d $_dir/*/* | tr -d ': '
+}
+
+function __fmt
+{
+			echo -e "$(dirs)" | columns -w $_n -c $_n
+}
+
+function __clear
+{
+			_before=$(__size)
+			rm -rf $_dir && mkdir $_dir
+			_after=$(__size)
+			echo "removed $(( $_before - $_after  ))"
+}
+
+function __select
+{
+			for _i in $(__fmt | tr -s ' \n'); do
+				echo -e "\n\t$_i"
+				echo &>/dev/null
+				read -p "[ y ] $ " REPLY
+
+				if [ "$REPLY" == "y" ]; then
+					echo "pubk::$(cat $_dir/$_i/publickey)"
+					echo "seck::$(cat $_dir/$_i/privatekey)"
+					echo "prek::$(cat $_dir/$_i/presharedkey)"
+				fi
+			done
+}
+
+__$_f

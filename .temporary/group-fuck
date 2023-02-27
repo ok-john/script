@@ -1,0 +1,20 @@
+#!/bin/bash
+# Parrallel group operations across the GF(4611686018427387904)
+# some points are on some elliptic curves, haha ya'know?
+
+out_file=${1:-"fuck.out"}
+G=$(( 1 << 62 ))
+bitsize=$(( $(echo $G|wc -c) - 1 ))
+
+function frick
+{
+	for i in $(echo {2..9}); do 
+		local x=$(nrnd $bitsize)
+		echo $(( $(( x * i )) % G )) 1>>$out_file&2>/dev/null
+	done
+	fg 2>/dev/null
+	frick
+}
+
+frick
+

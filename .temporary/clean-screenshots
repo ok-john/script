@@ -1,0 +1,4 @@
+. /etc/bashrc
+readonly __dir=/Volumes/ws/media/screenshots
+rasps $__dir
+exiftool -overwrite_original_in_place -all= $__dir/*

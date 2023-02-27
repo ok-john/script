@@ -1,0 +1,9 @@
+#!/opt/homebrew/bin/bash
+function __rnd
+{
+	cat /dev/urandom | head -n 10 | xxd -ps -c 200 | tr -d '\n' | cut -c -$1
+}
+
+r="$( __rnd 8 )-$( __rnd 4 )-$( __rnd 4 )-$( __rnd 4 )-$( __rnd 12 )"
+echo $r|pbcopy
+echo $r

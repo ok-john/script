@@ -1,0 +1,10 @@
+#!/opt/homebrew/bin/bash
+name="$(ps -o command $$ | tail -n 1|sed 's/.*\///g'|tr -d ' \n\t')"; _=("$@"); argv=${_[*]}; argc=${#_[*]}; start="$(date +%s)"; dir=$(dirname "$(realpath $0)"); ws="$dir/ws/$name"; mkdir -p $ws; usage() { echo -e 'toggle-socks5-proxy '; }; show_env() { echo -e "\nname: \t$name\n\nargv: \t$argv\n\nargc: \t$argc\n\nstart: \t$start\n\ndir: \t$dir\n\nws: \t$ws\n"; }
+proxy_state="$(networksetup -getsocksfirewallproxy Wi-Fi|sed 's/.*d://g'|head -n 1| tr -d ' ')"
+declare -A cfg_map=(
+	["Yes"]="off"
+	["No"]="on"
+)
+updated_state="${cfg_map[$proxy_state]}"
+echo "setting proxy to: $updated_state"
+sudo networksetup -setsocksfirewallproxystate Wi-Fi $updated_state

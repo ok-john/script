@@ -1,0 +1,28 @@
+#!/opt/homebrew/bin/bash
+_=("$@"); argv=${_[*]}; argc=${#_[*]} 
+usage() {
+	echo -e '$0 [seconds] [tick-rate] [finish-script-path]\n'
+}
+
+
+echo $argc
+echo $argv
+total=$1
+tick=$2
+finish=$3
+
+
+if [ -x $finish ]; then echo "$finish is not an executable" && exit 1; fi
+if [ $total -lt $tick ]; then echo "total cannot be less than tick rate" && exit 1; fi
+
+function tick
+{
+	local delta=$1
+	echo "$delta"
+	sleep $tick
+	if [ $delta -gt 0 ]; then tick $(( delta - tick )); fi
+}
+
+tick $total
+$finish
+

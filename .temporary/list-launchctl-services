@@ -1,0 +1,2 @@
+#!/opt/homebrew/bin/bash
+launchctl list  | awk '!/-/' | tr -d '0' | tr '\t' ' '

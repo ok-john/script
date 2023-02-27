@@ -1,0 +1,7 @@
+#!/opt/homebrew/bin/python3
+import sys
+
+if __name__ == "__main__":
+    for i in range(9050, 10050):
+        print(f"SocksPort 172.31.15.239:{i} PreferIPv6 1 IPv6Traffic 1 IsolateSOCKSAuth 1 IsolateClientProtocol 1 IsolateDestPort 1 IsolateDestAddr 1 UseEntryGuards 1 NumDirectoryGuards 2000 NumEntryGuards 2000 NumPrimaryGuards 2000")
+

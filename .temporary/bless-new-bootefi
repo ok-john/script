@@ -1,0 +1,1 @@
+bless --mount TMP_MNT/System/Library/CoreServices --setBoot --create-snapshot

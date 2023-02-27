@@ -1,0 +1,8 @@
+#!/opt/homebrew/bin/python3
+import sys
+
+if __name__ == "__main__":
+    M,m,r = sys.argv[1].split('.')
+    r = int(r) - 1
+    print('.'.join([M, m, str(r)]))
+

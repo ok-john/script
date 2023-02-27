@@ -1,0 +1,4 @@
+#!/usr/bin/python3
+import sys
+from datetime import datetime
+if __name__ == "__main__": print(str(datetime.utcnow().timestamp()).split('.')[0])

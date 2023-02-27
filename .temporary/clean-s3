@@ -1,0 +1,22 @@
+# You can pass this a s3 buckets root URL.
+URL=${1:-""}
+SHA="$(echo $URL | sha256sum -z | cut -c -32)"
+mkdir -p $SHA
+cd $SHA
+mkdir -p results wgets
+echo $URL > URL
+
+wget -q "$1" -O "${SHA}.html"
+cat "${SHA}.html" | sed 's/></>\n</g' | grep '<Key>' | sed -e 's/<Key>\(.*\)<\/Key>/\1/' > wget.tmp
+
+echo "mkdir -p wgets" >> wget.sh
+echo "cd wgets" >> wget.sh
+
+while read p; do
+  echo "wget -q '$URL$p' &" >> wget.sh
+done < wget.tmp
+
+rm -rf wget.tmp
+chmod +x wget.sh
+
+echo -e "results available at: \n\t$(pwd)"

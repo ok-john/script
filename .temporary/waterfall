@@ -1,0 +1,1 @@
+v=$(nrnd 70); for _ in {0..5000}; do sleep 0.02; l=$(rot_left ${v:0:32}); r="$(rot_right ${v:32:63})";v="${l}${r}"; echo -e "\t    $v"; done

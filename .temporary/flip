@@ -1,0 +1,2 @@
+#!/opt/homebrew/bin/bash
+echo $1 | sed 's/-/7/g' | sed 's/_/-/g' | sed 's/7/_/g'

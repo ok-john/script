@@ -1,0 +1,11 @@
+if [ ${#1} -lt 1 ]; then
+	echo -e 'usage\ng-bucket-file-search [bucket_id] [search_query]'
+	exit 1
+fi
+
+_buid=$1
+exts=("${@}")
+_terms="$(echo ${exts[@]:1}| sed 's/ /%20/g')"
+
+curl "https://buckets.grayhatwarfare.com/api/v1/bucket/${_buid}/files/0/1000?access_token=ec5d8ad5c3cb1d6a9c29c3601ef5a6c3&keywords=${_terms}&full-path=1" | jq
+

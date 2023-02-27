@@ -1,0 +1,13 @@
+export LC_CTYPE=C
+export CURL_HOME="/Users/cat"
+export SD="/Volumes/script"
+export PATH="/usr/bin:/bin:/usr/sbin:/usr/local/bin:/usr/X11/bin"
+export PATH="/opt/homebrew/Cellar/node/19.6.0/bin:/usr/local/go/bin:/usr/local/bin:/usr/sbin:/opt/homebrew/opt/icu4c/bin:/opt/homebrew/opt/icu4c/sbin:/opt/homebrew/bin:/opt/homebrew/opt/llvm/bin:/opt/homebrew/opt/make/libexec/gnubin:$SD:$PATH:/Volumes/ws/lib/jsshell-mac"
+export LDFLAGS="-L/opt/homebrew/opt/llvm/lib -L/opt/homebrew/opt/libpng/lib -L/opt/homebrew/opt/zlib/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/llvm/include -L/opt/homebrew/opt/libpng/include -I/opt/homebrew/opt/zlib/include"
+export LDFLAGS="$LDFLAGS -L/opt/homebrew/opt/curl/lib -L/opt/homebrew/lib L/opt/homebrew/opt/llvm/lib -L/opt/homebrew/opt/libpng/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/gmp/lib"
+export CPPFLAGS="$CPPFLAGS -I/opt/homebrew/opt/curl/include -I/opt/homebrew/include -I/opt/homebrew/opt/llvm/include -L/opt/homebrew/opt/libpng/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/gmp/include"
+export CC="/opt/homebrew/opt/llvm/bin/clang"
+export AR="/opt/homebrew/opt/llvm/bin/llvm-ar"
+export LIBRARY_PATH="$(brew --prefix)/lib"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/curl/lib/pkgconfig:$PKG_CONFIG_PATH"

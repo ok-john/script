@@ -1,0 +1,4 @@
+
+# Hex to binary conversion
+    echo -n "$1" | sed -e 's/^0x//' -e 's/\([0-9A-Fa-f]\{2\}\)/\\\\\\\x\1/g'
+

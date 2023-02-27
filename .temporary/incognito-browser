@@ -1,0 +1,1 @@
+/Applications/Brave\ Browser.app/Contents/MacOS/Brave\ Browser --disable-ipv4 --ssl-version-min tls1.3 --incognito --profile

@@ -1,0 +1,39 @@
+
+# Hex to binary conversion
+hex2() {
+    echo -n "$1" | sed -e 's/^0x//' -e 's/\([0-9A-Fa-f]\{2\}\)/\\\\\\\x\1/g'
+}
+
+# Binary to hex conversion
+bin2hex() {
+    echo -n "$1" | sed -e 's/\\\\\\\x\([0-9A-Fa-f]\{2\}\)/\1/g' | tr [a-f] [A-F]
+}
+
+# Get a word from a binary string
+get_word() {
+    echo -n "${1:0:8}"
+    echo -n "${1:8:16}"
+}
+
+# Get a double word from a binary string
+get_dword() {
+    echo -n "${1:0:16}"
+    echo -n "${1:16:32}"
+}
+
+# Rotate a word right
+rot_right() {
+    local word="$(get_word "$1")"
+    local last_bit="$(echo -n "$word" | cut -c 8-)"
+    local rest_bits="$(echo -n "$word" | cut -c -7)"
+    echo -n "$last_bit$rest_bits"
+}
+
+# Rotate a word left
+rot_left() {
+    local word="$(get_word "$1")"
+    local first_bit="$(echo -n "$word" | cut -c -1)"
+    local rest_bits="$(echo -n "$word" | cut -c 2-)"
+    echo -n "$rest_bits$first_bit"
+}
+

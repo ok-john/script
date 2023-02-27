@@ -1,0 +1,14 @@
+" Standard
+filetype plugin indent on
+au BufNewFile,BufRead * if &syntax == '' | set syntax=bash | endif
+syntax on
+
+" Kernel
+set title
+set tabstop=8
+set softtabstop=8
+set shiftwidth=8
+set noexpandtab
+set shell=/opt/homebrew/bin/bash
+set nowrap
+

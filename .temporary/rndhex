@@ -1,0 +1,3 @@
+#!/opt/homebrew/bin/bash
+amt=${1:-16}
+cat /dev/urandom | head -n $(( amt * 2 )) | xxd -ps -cols $(( amt * 1000 )) | cut -c -${amt}

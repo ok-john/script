@@ -1,0 +1,10 @@
+readonly _substr=${1:-"x"}
+readonly _string=${2:-"z"}
+readonly _exit_style=${3:-"exit"}
+
+RET=0
+if grep -q "$_substr" <<< "$_string"; then
+	RET=1
+fi
+$_exit_style $RET
+

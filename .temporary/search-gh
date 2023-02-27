@@ -1,0 +1,3 @@
+
+
+echo "curl https://github.com/search?q=$1&ref=opensearch" | bash

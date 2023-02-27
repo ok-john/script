@@ -1,0 +1,8 @@
+#!/bin/bash
+
+f=${1:-"index.html"}
+tmpfile=".tmp.$(cat $f | sha256sum | cut -c -15)"
+cp $f $f.bak
+tidy --custom-tags yes --indent-with-tabs -q -m $f 
+#grep -v 'meta' $tmpfile | tr -s '\n' > $f
+#rm -rf $tmpfile
